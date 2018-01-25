@@ -1,0 +1,14 @@
+set logging file log.txt
+set logging on
+
+set prompt \033[0;33m(gdb) \033[0m
+set print pretty on
+
+b hlslParseHelper.cpp:6583
+b hlslParseHelper.cpp:8454
+b hlslParseHelper.cpp:7827
+b hlslParseHelper.cpp:7577
+b hlslParseHelper.cpp:7703
+
+# b Types.h:
+# b Types.h:
