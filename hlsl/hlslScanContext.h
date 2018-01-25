@@ -82,7 +82,14 @@ public:
 
     void tokenize(HlslToken&);
     glslang::TBuiltInVariable mapSemantic(const char*);
+    const char* mapKeyword(EHlslTokenClass keyword);
 
+    const char *keywordString[297] = {
+        #include "hlslTokenText.h"
+    };
+
+    const char* tokenText;
+    EHlslTokenClass keyword;
 protected:
     HlslScanContext(HlslScanContext&);
     HlslScanContext& operator=(HlslScanContext&);
@@ -100,8 +107,6 @@ protected:
     TPpToken* ppToken;
     HlslToken* parserToken;
 
-    const char* tokenText;
-    EHlslTokenClass keyword;
 };
 
 } // end namespace glslang

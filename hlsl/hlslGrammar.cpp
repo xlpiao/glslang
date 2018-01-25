@@ -54,6 +54,7 @@
 #include "hlslTokens.h"
 #include "hlslGrammar.h"
 #include "hlslAttributes.h"
+#include <iostream>
 
 namespace glslang {
 
@@ -211,6 +212,8 @@ bool HlslGrammar::acceptSamplerState()
             expected("assign");
             return false;
         }
+        std::cout << "\n### " << stateName.c_str() << ", "
+                  << this->scanner.tokenText << std::endl;
 
         if (stateName == "minlod" || stateName == "maxlod") {
             if (! peekTokenClass(EHTokIntConstant)) {
@@ -436,6 +439,13 @@ bool HlslGrammar::acceptDeclaration(TIntermNode*& nodeList)
             TArraySizes* arraySizes = nullptr;
             acceptArraySpecifier(arraySizes);
 
+            const char* keyword;
+            keyword = this->scanner.mapKeyword(this->scanner.keyword);
+            // std::cout << "\n@@@ Debug: " << keyword << ", " << fullName->c_str() << ", ";
+            // std::cout << "\nTTT1 " << variableType.getBasicType() << "\n ";
+            // std::cout << "\nTTT2 " << variableType.getBasicTypeString() << "\n ";
+            std::cout << "\n@@@ Debug: " << variableType.findBasicHlslTypeString(keyword) << ", ";
+            std::cout << fullName->c_str() << ", ";
             // Fix arrayness in the variableType
             if (declaredType.isImplicitlySizedArray()) {
                 // Because "int[] a = int[2](...), b = int[3](...)" makes two arrays a and b
@@ -2054,6 +2064,9 @@ bool HlslGrammar::acceptStruct(TType& type, TIntermNode*& nodeList)
             structName = *token.string;
         advanceToken();
     }
+    const char* key;
+    key = this->scanner.mapKeyword(this->scanner.keyword);
+    std::cout << "\n--- Debug: " << key << ", " << structName.c_str() << ", ";
 
     // post_decls
     TQualifier postDeclQualifier;
@@ -2374,6 +2387,7 @@ bool HlslGrammar::acceptStructDeclarationList(TTypeList*& typeList, TIntermNode*
                 member.type->setFieldName(*idToken.string);
                 typeList->push_back(member);
 
+                printf("\n::: %s, ", member.type->getFieldName().c_str());
                 // array_specifier
                 TArraySizes* arraySizes = nullptr;
                 acceptArraySpecifier(arraySizes);
@@ -4007,11 +4021,13 @@ bool HlslGrammar::acceptPostDecls(TQualifier& qualifier)
                     break;
                 }
                 parseContext.handleRegister(registerDesc.loc, qualifier, profile.string, *registerDesc.string, subComponent, spaceDesc.string);
+                printf("BBB: %s, %d, %d\n", registerDesc.string->c_str(), qualifier.layoutSet, qualifier.layoutBinding);
             } else {
                 // semantic, in idToken.string
                 TString semanticUpperCase = *idToken.string;
                 std::transform(semanticUpperCase.begin(), semanticUpperCase.end(), semanticUpperCase.begin(), ::toupper);
                 parseContext.handleSemantic(idToken.loc, qualifier, mapSemantic(semanticUpperCase.c_str()), semanticUpperCase);
+                printf("AAA: %s, %d\n", qualifier.semanticName, qualifier.layoutLocation);
             }
         } else if (peekTokenClass(EHTokLeftAngle)) {
             found = true;

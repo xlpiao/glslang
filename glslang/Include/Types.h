@@ -242,6 +242,55 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
 
         return s;
     }
+
+    TString getTypeString(const char* keyword) const
+    {
+        TString s;
+
+        if (sampler) {
+            s.append(keyword);
+            return s;
+        }
+
+        switch (type) {
+        case EbtFloat:               break;
+        case EbtInt:                 break;
+        case EbtUint:                break;
+        default:  break;  // some compilers want this
+        }
+        if (image) {
+            if (dim == EsdSubpass)
+                s.append("subpass");
+            else
+                s.append("image");
+        } else if (combined) {
+            s.append("sampler");
+        } else {
+            s.append("texture");
+        }
+        if (external) {
+            s.append("ExternalOES");
+            return s;
+        }
+        switch (dim) {
+        case Esd1D:      s.append("1D");      break;
+        case Esd2D:      s.append("2D");      break;
+        case Esd3D:      s.append("3D");      break;
+        case EsdCube:    s.append("Cube");    break;
+        case EsdRect:    s.append("2DRect");  break;
+        case EsdBuffer:  s.append("Buffer");  break;
+        case EsdSubpass: s.append("Input"); break;
+        default:  break;  // some compilers want this
+        }
+        if (ms)
+            s.append("MS");
+        if (arrayed)
+            s.append("Array");
+        if (shadow)
+            s.append("Shadow");
+
+        return s;
+    }
 };
 
 //
@@ -1744,6 +1793,14 @@ public:
     {
         if (basicType == EbtSampler)
             return sampler.getString();
+        else
+            return getBasicString();
+    }
+
+    TString findBasicHlslTypeString(const char* keyword) const
+    {
+        if (basicType == EbtSampler)
+            return sampler.getTypeString(keyword);
         else
             return getBasicString();
     }

@@ -57,6 +57,7 @@ namespace glslang {
         void pushTokenStream(const TVector<HlslToken>* tokens);
         void popTokenStream();
 
+        HlslScanContext& scanner;         // lexical scanner, to get next token from source file
     protected:
         HlslToken token;                  // the token we are currently looking at, but have not yet accepted
 
@@ -64,7 +65,6 @@ namespace glslang {
         HlslTokenStream();
         HlslTokenStream& operator=(const HlslTokenStream&);
 
-        HlslScanContext& scanner;         // lexical scanner, to get next token from source file
         TVector<const TVector<HlslToken>*> tokenStreamStack; // for getting the next token from an existing vector of tokens
         TVector<int> tokenPosition;
         TVector<HlslToken> currentTokenStack;

@@ -463,6 +463,11 @@ void HlslScanContext::tokenize(HlslToken& token)
     token.tokenClass = tokenClass;
 }
 
+const char* HlslScanContext::mapKeyword(EHlslTokenClass EHToken)
+{
+    return keywordString[EHToken];
+}
+
 glslang::TBuiltInVariable HlslScanContext::mapSemantic(const char* upperCase)
 {
     auto it = SemanticMap->find(upperCase);

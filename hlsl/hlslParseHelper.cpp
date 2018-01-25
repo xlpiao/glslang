@@ -5882,6 +5882,7 @@ void HlslParseContext::handleSemantic(TSourceLoc loc, TQualifier& qualifier, TBu
     if (qualifier.builtIn == EbvNone)
         qualifier.builtIn = builtIn;
     qualifier.semanticName = intermediate.addSemanticName(upperCase);
+    qualifier.layoutLocation = getSemanticNumber(upperCase, 0, nullptr);
 }
 
 //
@@ -5959,6 +5960,7 @@ void HlslParseContext::handleRegister(const TSourceLoc& loc, TQualifier& qualifi
     case 'c':
     case 's':
     case 'u':
+        qualifier.layoutSet = 0;
         // if nothing else has set the binding, do so now
         // (other mechanisms override this one)
         if (!qualifier.hasBinding())
