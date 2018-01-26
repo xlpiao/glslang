@@ -751,6 +751,7 @@ void StderrIfNonEmpty(const char* str)
 // and separation of handling file IO versus API (programmatic) compilation.
 struct ShaderCompUnit {
     EShLanguage stage;
+    const char *stageName;
     static const int maxCount = 1;
     int count;                          // live number of strings/names
     const char* text[maxCount];         // memory owned/managed externally
@@ -780,6 +781,15 @@ struct ShaderCompUnit {
     }
 };
 
+const char *stageName[EShLangCount] = {
+    "vert", // ShLangVertex
+    "tesc", // EShLangTessControl
+    "tese", // EShLangTessEvaluation
+    "geom", // EShLangGeometry
+    "frag", // EShLangFragment
+    "comp", // EShLangCompute
+};
+
 //
 // For linking mode: Will independently parse each compilation unit, but then put them
 // in the same program and link them together, making at most one linked module per
@@ -803,6 +813,7 @@ void CompileAndLinkShaderUnits(std::vector<ShaderCompUnit> compUnits)
     glslang::TProgram& program = *new glslang::TProgram;
     for (auto it = compUnits.cbegin(); it != compUnits.cend(); ++it) {
         const auto &compUnit = *it;
+        printf("Debug: Stage: %s\n", stageName[compUnit.stage]);
         glslang::TShader* shader = new glslang::TShader(compUnit.stage);
         shader->setStringsWithLengthsAndNames(compUnit.text, NULL, compUnit.fileNameList, compUnit.count);
         if (entryPointName) // HLSL todo: this needs to be tracked per compUnits
