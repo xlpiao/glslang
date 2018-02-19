@@ -2564,6 +2564,13 @@ void TGlslangToSpvTraverser::decorateStructType(const glslang::TType& type,
     // Name and decorate the non-hidden members
     int offset = -1;
     int locationOffset = 0;  // for use within the members of this struct
+    if (type.getQualifier().hasSet() && type.getQualifier().hasBinding()) {
+        std::cout << "\nCCC: Debug: " <<
+                     "Name: " << type.getTypeName() << ", "
+                     "DescriptorSet: "  << type.getQualifier().layoutSet << ", "
+                     "DescriptorBinding: "  << type.getQualifier().layoutBinding << std::endl;
+    }
+
     for (int i = 0; i < (int)glslangMembers->size(); i++) {
         glslang::TType& glslangMember = *(*glslangMembers)[i].type;
         int member = i;
@@ -5534,8 +5541,12 @@ spv::Id TGlslangToSpvTraverser::getSymbolId(const glslang::TIntermSymbol* symbol
             builder.addDecoration(id, spv::DecorationOffset, symbol->getQualifier().layoutOffset);
     }
 
-    if (symbol->getQualifier().hasLocation())
+    if (symbol->getQualifier().hasLocation()) {
+        std::cout << "\nLLL: Debug: " <<
+                     "Name: " << symbol->getName() << ", "
+                     "Location: "  << symbol->getQualifier().layoutLocation << std::endl;
         builder.addDecoration(id, spv::DecorationLocation, symbol->getQualifier().layoutLocation);
+    }
     addDecoration(id, TranslateInvariantDecoration(symbol->getType().getQualifier()));
     if (symbol->getQualifier().hasStream() && glslangIntermediate->isMultiStream()) {
         builder.addCapability(spv::CapabilityGeometryStreams);
@@ -5549,6 +5560,12 @@ spv::Id TGlslangToSpvTraverser::getSymbolId(const glslang::TIntermSymbol* symbol
     }
     if (symbol->getQualifier().hasBinding())
         builder.addDecoration(id, spv::DecorationBinding, symbol->getQualifier().layoutBinding);
+    if (symbol->getQualifier().hasSet() && symbol->getQualifier().hasBinding() && symbol->getBasicType() != glslang::EbtBlock) {
+        std::cout << "\nHHH: Debug: " <<
+                     "Name: " << symbol->getName() << ", "
+                     "DescriptorSet: "  << symbol->getQualifier().layoutSet << ", "
+                     "DescriptorBinding: "  << symbol->getQualifier().layoutBinding << std::endl;
+    }
     if (symbol->getQualifier().hasAttachment())
         builder.addDecoration(id, spv::DecorationInputAttachmentIndex, symbol->getQualifier().layoutAttachment);
     if (glslangIntermediate->getXfbMode()) {

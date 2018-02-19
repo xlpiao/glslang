@@ -3,8 +3,8 @@ ninja install -j9
 cd ..
 
 echo "-------------------------------------------------"
-$PWD/dBuild/install/bin/glslangValidator -V -D -S vert test.vs -e main --rsb 0 --iy -o test.vs.vert.spv
+$PWD/dBuild/install/bin/glslangValidator -V -D -H test.vs -S vert -e main -o test.vs.vert.spv \
+                                         --rsb 0 --hlsl-iomap --amb --aml --sub 0 --stb 16 --ssb 32 --iy
 echo "-------------------------------------------------"
-$PWD/dBuild/install/bin/glslangValidator -V -D -S vert directx.vs -e main --rsb 0 --iy -o directx.vs.vert.spv
-
-rm test.vs.vert.spv directx.vs.vert.spv
+$PWD/dBuild/install/bin/glslangValidator -V -D -H directx.vs -S vert -e main -o directx.vs.vert.spv \
+                                         --rsb 0 --hlsl-iomap --amb --aml --sub 0 --stb 16 --ssb 32 --iy
